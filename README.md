@@ -5,6 +5,9 @@ Small R script that displays how to fill gaps straightly or smoothly. For design
 None. This script uses base R capabilities only, including the `grid` library.
 
 # Usage
+
+![sample](sample.png)
+
 Use `source()` to load "minecraft.R" from an appropriate working directory.
 
 The functions in this script are intended for the following use:
