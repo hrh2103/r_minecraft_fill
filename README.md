@@ -6,7 +6,7 @@ None. This script uses base R capabilities only, including the `grid` library.
 
 # Usage
 
-![sample](sample.png)
+![sample](./sample.png)
 
 Use `source()` to load "minecraft.R" from an appropriate working directory.
 
