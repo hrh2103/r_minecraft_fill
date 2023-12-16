@@ -1,10 +1,18 @@
 library(grid)
 
+# Smooth [polynomial] version of terrain fill.
+# x and y determine canvas size.
 fillsmooth <- function(x=25, y=25) fill(polyinterp, x, y)
 
+# Straight [linear] version of terrain fill.
+# x and y determine canvas size.
 fillstraight <- function(x=25, y=25) fill(lininterp, x, y)
 
+# Plot a grid and allow the user to place columns on it.
+# Fill between the columns in red using a selected interpolation function.
+# Useful for Minecraft design.
 fill <- function(mode, x=25, y=25) {
+	# Use grid library features to create a borderless grid.
 	par(mar=rep(0, 4))
 	plot(
 		NULL, xlim=c(0, x), ylim=c(0, y),
@@ -14,6 +22,9 @@ fill <- function(mode, x=25, y=25) {
 	grid(x, y)
 	par(mar=rep(0,4))
 
+	# Macro: plot a rectangle of specified height and color
+	# at a specified horizontal position rectx.
+	# Destroy any previous rectangle at that horizontal position.
 	makerect <- function(rectx, recty=0, color="black") {
 		rectname <- as.character(rectx)
 		while (rectname %in% getNames()) {
@@ -30,9 +41,19 @@ fill <- function(mode, x=25, y=25) {
 		)
 	}
 
-	rect_buffer <- sapply(0:25, makerect)
+	# Initialize height-0 rectangles at all positions.
+	sapply(0:25, makerect)
+
+	# Internal matrix representation of user-created rectangle
+	# positions and heights.
 	points <- matrix(c(1:x, rep(NA, x)), x, 2)
 
+	# GUI loop. Create black rectangles on user click.
+	# Destroy and redraw the rectangle if the user clicks on the
+	# same column of the grid again.
+	# This loop exits once the user enters a right-click
+	# instead of a left-click and selects "quit",
+	# causing grid.locator() to return null.
 	while (TRUE) {
 		pos <- grid.locator("npc")
 		if (is.null(pos)) break
@@ -44,11 +65,14 @@ fill <- function(mode, x=25, y=25) {
 		grid(x, y)
 	}
 
+	# Finalize the representation of user-submitted data
+	# and send it to the interpolator.
 	points <- points[!is.na(points[, 2]), , drop=FALSE]
-
 	x_points <- points[, 1]
-
 	interpolator <- mode(points)
+
+	# Use the interpolator to plot red rectangles with interpolated heights
+	# but only between user-created black rectangles.
 	for (i in 1:x) {
 		if (i <= min(x_points) | i >= max(x_points) | i %in% x_points) {
 			next
